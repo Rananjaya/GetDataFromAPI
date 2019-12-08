@@ -15,7 +15,9 @@ import {
   Text,
   StatusBar,
   ActivityIndicator,
-  FlatList
+  FlatList,
+  TouchableOpacity,
+ 
 } from 'react-native';
 
 import {
@@ -25,6 +27,7 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Url = 'https://facebook.github.io/react-native/movies.json'
 export default class App extends React.Component{
@@ -57,7 +60,26 @@ export default class App extends React.Component{
         console.log("State Data", this.state.dataSource)
   
   }
+  saveData(){
+        //Javascrpit Object
+        let obj = {
+          name:'Rananjaya Bandara',
+          email: 'rananjayabandara@test.com',
+          city:'Colombo',
+      }
+   
+    AsyncStorage.setItem('user', JSON.stringify(obj)); // Jason coverted to string
+  }
+showData = async () =>{
+  try{
+      let user = await AsyncStorage.getItem('user');
+      let parsed = JSON.parse(user) //convert it back to agien to JavaScrpit object
+      alert(parsed.name);
+  }
+  catch(error){
 
+  }
+}
   render(){
     if(this.state.isLoding){
           return(
@@ -68,11 +90,12 @@ export default class App extends React.Component{
     }
     return(
       <View style={styles.container}>
-         <FlatList
-             data={this.state.dataSource}
-             renderItem={({item}) => <Text>{item.title}, {item.releaseYear}</Text>}
-             keyExtractor={item => item.id}
-         />
+            <TouchableOpacity onPress={this.saveData}>
+              <Text>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.showData}>
+              <Text>Show Data</Text>
+            </TouchableOpacity>
       </View>
     );
   }
